@@ -17,11 +17,6 @@
     DB_PASSWORD=my-db-password
 	APP_URL=https://mylocal.org
 
-выполним:
-<p style="color: #F8F8F8; font-weight: bold;"> 
-cp ./docker-compose/nginx/conf.d/auth-research.conf.example ./docker-compose/nginx/conf.d/auth-research.conf
-</p>
-
 В зависимости от того, хотим дебажить или нет - копируем один из двух файлов:
 <p style="color: #F8F8F8; font-weight: bold;">
 cp ./docker/php/Dockerfile.example_debug ./docker/php/Dockerfile
