@@ -1,0 +1,70 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: docker/php/Dockerfile
+    image: laravel-app-image
+    container_name: laravel-app
+#    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker-compose/php/laravel.ini:/usr/local/etc/php/conf.d/laravel.ini
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.220.1 remote_enable=1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    networks:
+      - laravelnetwork
+
+  db:
+    image: mysql:5.7
+    container_name: laravel-db
+#    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql/etc:/etc/mysql/
+      - ./docker-compose/dbdata:/var/lib/mysql
+    networks:
+      - laravelnetwork
+
+  nginx:
+    image: nginx:alpine
+    container_name: laravel-nginx
+#    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx/conf.d:/etc/nginx/conf.d/
+      - ./docker-compose/nginx/ssl:/etc/ssl/
+      - ./docker-compose/nginx/snippets:/etc/nginx/snippets/
+      - ./docker-compose/nginx/dhparam:/etc/nginx/dhparam/
+    networks:
+      - laravelnetwork
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  laravelnetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        -   subnet: 192.168.220.0/28
