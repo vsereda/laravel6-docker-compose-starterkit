@@ -1,78 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Установка LARAVEL
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+добавим в /etc/hosts:
+<p style="color: #F8F8F8; font-weight: bold;">  127.0.0.1	mylocal.org</p>
+
+выполним:
+<p style="color: #F8F8F8; font-weight: bold;"> git clone [имя этого репозитоия] mylocal </p>
+<p style="color: #F8F8F8; font-weight: bold;"> cd mylocal/ </p>
+<p style="color: #F8F8F8; font-weight: bold;"> cp .env.example .env </p>
+
+настроим содержимое .env:
+
+    APP_NAME=MY
+    DB_HOST=db
+    DB_DATABASE=my-db-name
+    DB_USERNAME=my-db-username
+    DB_PASSWORD=my-db-password
+	APP_URL=https://mylocal.org
+
+выполним:
+<p style="color: #F8F8F8; font-weight: bold;"> 
+cp ./docker-compose/nginx/conf.d/auth-research.conf.example ./docker-compose/nginx/conf.d/auth-research.conf
 </p>
 
-## About Laravel
+В зависимости от того, хотим дебажить или нет - копируем один из двух файлов:
+<p style="color: #F8F8F8; font-weight: bold;">
+cp ./docker/php/Dockerfile.example_debug ./docker/php/Dockerfile
+</p>
+<p style="color: #F8F8F8; font-weight: bold;"> 
+cp ./docker/php/Dockerfile ./docker/php/Dockerfile
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+далее:
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose up -d --build
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose exec app composer install
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose exec app php artisan key:generate
+</p>
 
-## Learning Laravel
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose exec app openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/www/docker-compose/nginx/ssl/private/nginx-selfsigned.key -out /var/www/docker-compose/nginx/ssl/certs/nginx-selfsigned.crt
+</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+примеры ответов, которые надо будет дать:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+	Country Name (2 letter code) [AU]:UA
+	State or Province Name (full name) [Some-State]:Kharkiv
+	Locality Name (eg, city) []:Kharkiv
+	Organization Name (eg, company) [Internet Widgits Pty Ltd]:Bouncy Castles, Inc.
+	Organizational Unit Name (eg, section) []:Ministry of Water Slides
+	Common Name (e.g. server FQDN or YOUR name) []:mylocal.org
+	Email Address []:vladimir45822@gmail.com
 
-## Laravel Sponsors
+далее:
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose exec app openssl dhparam -out /var/www/docker-compose/nginx/dhparam/dhparam.pem 4096
+</p>
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose restart nginx
+</p>
+<p style="color: #F8F8F8; font-weight: bold;">
+docker-compose ps
+</p>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Должны увидеть что все 3 сервиса ок (точнее там уже больше сервисов, все должны быть Up):
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+    Name                 Command               State                                   Ports
+    ---------------------------------------------------------------------------------------------------------------------------
+    laravel-app     docker-php-entrypoint php-fpm    Up      9000/tcp
+    laravel-db      docker-entrypoint.sh mysqld      Up      0.0.0.0:3306->3306/tcp,:::3306->3306/tcp, 33060/tcp
+    laravel-nginx   /docker-entrypoint.sh ngin ...   Up      0.0.0.0:443->443/tcp,:::443->443/tcp, 0.0.0.0:80->80/tcp,:::80->80/tcp
 
-## Contributing
+далее вместо того чтобы каждый раз писать <span  style="color: #F8F8F8; font-weight: bold;">docker-compose exec app</span> можно использовать для входа в контейнер:
+<p style="color: #F8F8F8; font-weight: bold;">
+docker exec -it laravel-app bash
+</p>
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+должены быть выполнены миграции и посев данных:
+<p style="color: #F8F8F8; font-weight: bold;">
+php artisan migrate --seed
+</p>
