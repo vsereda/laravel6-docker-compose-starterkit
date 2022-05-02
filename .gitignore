@@ -20,4 +20,3 @@ docker-compose/nginx/ssl/private/nginx-selfsigned.key
 docker-compose/nginx/dhparam/dhparam.pem
 docker-compose/nginx/conf.d/auth-research.conf
 docker-compose/dbdata
-docker-compose/php/laravel.ini
